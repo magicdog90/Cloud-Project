@@ -1,0 +1,35 @@
+---
+- name: elkconfig
+  hosts: webservers
+  become: true
+  tasks:
+
+  - name: install python3-pip
+    apt:
+      force_apt_get: yes
+      update_cache: yes
+      name: python3-pip
+      state: present
+
+  - name: install docker.io
+    apt:
+      force_apt_get: yes
+      name: docker.io
+      state: present
+
+  - name: install docker
+    pip:
+      name: docker
+      state: present
+
+  - name: install DVWA
+    docker_container:
+      name: dvwa
+      image: cyberxsecurity/dvwa
+      state: started
+      published_ports: 80:80
+
+  - name: enable docker service on boot
+    systemd:
+      name: docker
+      enabled: yes
